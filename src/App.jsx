@@ -2,18 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
-
-  // useEffect(() => {
-  //   (async () => {
-  //     const response = await fetch(
-  //       "http://localhost:5001/books",
-  //       { method: "GET", 
-  //         mode: "cors",
-  //       });
-
-  //     console.log(response);
-  //   })
-  // }, []);
+  const [featuredBook, setFeaturedBook] = useState({});
 
   useEffect(() => {
     (async () => {
@@ -24,21 +13,30 @@ function App() {
 
       const data = await response.json();
       console.log(data);
-      // setBooks(data.books);
     })();
   }, []);
 
-  // useEffect(async () => {
-  //   async function fetchData() {
-  //     console.log(await fetch("http://localhost:5001/books"));
-  //   }
+  useEffect(() => {
+    console.log(featuredBook);
+  });
 
-  //   fetchData();
-  // }, []);
+  const getRandomBook = () => {
+    (async () => {
+      const response = await fetch("http://localhost:5001/books/getrandom", {
+        method: "GET",
+        mode: "cors",
+      });
+
+      setFeaturedBook(await response.json());
+    })();
+  }
 
   return (
     <>
-      Hello
+      <button onClick={getRandomBook}>Get Random Book</button>
+      <h1>{featuredBook.title}</h1>
+      <h2>{featuredBook.author}</h2>
+      <p>{featuredBook.genre}</p>
     </>
   )
 }
