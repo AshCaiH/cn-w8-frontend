@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
+  const [state, setState] = useState("all");
+  const [books, setBooks] = useState([]);
   const [featuredBook, setFeaturedBook] = useState({});
 
   useEffect(() => {
@@ -11,14 +13,55 @@ function App() {
         mode: "cors",
       });
 
-      const data = await response.json();
-      console.log(data);
+      await setBooks(await response.json());
+      console.log(books[0].title);
     })();
   }, []);
 
   useEffect(() => {
     console.log(featuredBook);
   });
+
+  let page = null;
+
+  if (state == "all") page = <AllBooks books={books} />
+  else if (state == "random") page = <RandomBook setFeaturedBook={setFeaturedBook} featuredBook={featuredBook} />
+  else if (state == "add") page = <RandomBook books={books} />
+
+  return (
+    <>
+      <div className="pageControls">
+        <button onClick={()=>setState("all")}>See all books</button>
+        <button onClick={()=>setState("random")}>Randomiser</button>
+        {/* <button onClick={()=>setState("addBook")}>Add book</button> */}
+      </div>
+      {page}
+    </>
+  )
+}
+
+const AllBooks = (props) => {
+  const {books} = props;
+
+  console.log(props.books);
+
+  return (
+    <div className="bookList">
+    {books.map((item) => {
+      return (
+        <div className="bookCard" key={item.id}>
+          <p>{item.title}</p>
+          <p>{item.author}</p>
+          <p>{item.genre}</p>
+        </div>
+      )
+    })}
+    </div>
+  )
+}
+
+const RandomBook = (props) => {
+  const {setFeaturedBook, featuredBook} = props;
 
   const getRandomBook = () => {
     (async () => {
@@ -33,7 +76,7 @@ function App() {
 
   return (
     <>
-      <button onClick={getRandomBook}>Get Random Book</button>
+      <div><button onClick={getRandomBook}>Get Random Book</button></div>
       <h1>{featuredBook.title}</h1>
       <h2>{featuredBook.author}</h2>
       <p>{featuredBook.genre}</p>
