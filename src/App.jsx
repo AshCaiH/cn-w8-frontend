@@ -14,13 +14,8 @@ function App() {
       });
 
       await setBooks(await response.json());
-      console.log(books[0].title);
     })();
-  });
-
-  useEffect(() => {
-    console.log(featuredBook);
-  });
+  }, []);
 
   let page = null;
 
@@ -43,9 +38,9 @@ function App() {
 const AllBooks = ({books}) => {
   return (
     <div className="bookList">
-    {books.map((item) => {
+    {books.map((item, index) => {
       return (
-        <div className="bookCard" key={item.id}>
+        <div className="bookCard" key={index}>
           <p>{item.title}</p>
           <p>{item.author}</p>
           <p>{item.genre}</p>
