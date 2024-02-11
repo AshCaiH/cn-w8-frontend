@@ -16,7 +16,7 @@ function App() {
       await setBooks(await response.json());
       console.log(books[0].title);
     })();
-  }, []);
+  });
 
   useEffect(() => {
     console.log(featuredBook);
@@ -40,11 +40,7 @@ function App() {
   )
 }
 
-const AllBooks = (props) => {
-  const {books} = props;
-
-  console.log(props.books);
-
+const AllBooks = ({books}) => {
   return (
     <div className="bookList">
     {books.map((item) => {
@@ -60,9 +56,7 @@ const AllBooks = (props) => {
   )
 }
 
-const RandomBook = (props) => {
-  const {setFeaturedBook, featuredBook} = props;
-
+const RandomBook = ({setFeaturedBook, featuredBook}) => {
   const getRandomBook = () => {
     (async () => {
       const response = await fetch("http://localhost:5001/books/getrandom", {
