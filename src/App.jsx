@@ -42,11 +42,7 @@ const AllBooks = ({books}) => {
     <div className="bookList">
     {books.map((item, index) => {
       return (
-        <div className="bookCard" key={index}>
-          <p>{item.title}</p>
-          <p>{item.author}</p>
-          <p>{item.genre}</p>
-        </div>
+        <Book key={index} book={item} />
       )
     })}
     </div>
@@ -68,9 +64,9 @@ const RandomBook = ({setFeaturedBook, featuredBook}) => {
   return (
     <>
       <div><button onClick={getRandomBook}>Get Random Book</button></div>
-      <h1>{featuredBook.title}</h1>
-      <h2>{featuredBook.author}</h2>
-      <p>{featuredBook.genre}</p>
+      <div className="bookList">
+        <Book book={featuredBook} />
+      </div>
     </>
   )
 }
@@ -91,8 +87,15 @@ const FindBooks = ({setSearchResults, searchResults}) => {
   )
 }
 
-const Book = ({index, book}) => {
+const Book = ({book}) => {
   
+  return (
+    <div className="bookCard">
+      <p>{book.title}</p>
+      <p>{book.author}</p>
+      <p>{book.genre}</p>
+    </div>
+  )
 }
 
 export default App
