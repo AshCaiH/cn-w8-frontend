@@ -6,6 +6,7 @@ function App() {
   const [books, setBooks] = useState([]);
   const [featuredBook, setFeaturedBook] = useState({});
   const [searchResults, setSearchResults] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -16,14 +17,14 @@ function App() {
 
       await setBooks(await response.json());
     })();
-  }, []);
+  }, [refresh]);
 
   let page = null;
 
-  if (state == "all") page = <AllBooks books={books} />
+  if (state == "all") page = <AllBooks books={books} refresh="refresh" setRefresh={setRefresh} />
   else if (state == "random") page = <RandomBook setFeaturedBook={setFeaturedBook} featuredBook={featuredBook} />
-  else if (state == "add") page = <AddBook />
-  else if (state == "search") page = <FindBooks books={books} searchResults={searchResults} setSearchResults={setSearchResults}/>
+  else if (state == "add") page = <AddBook refresh={refresh} setRefresh={setRefresh}/>
+  else if (state == "search") page = <FindBooks books={books} searchResults={searchResults} setSearchResults={setSearchResults} refresh={refresh} setRefresh={setRefresh}/>
 
   return (
     <>
@@ -39,12 +40,12 @@ function App() {
   )
 }
 
-const AllBooks = ({books}) => {
+const AllBooks = ({books, refresh, setRefresh}) => {
   return (
     <div className="bookList">
     {books.map((item, index) => {
       return (
-        <Book key={index} book={item} />
+        <Book key={index} book={item} refresh={refresh} setRefresh={setRefresh} />
       )
     })}
     </div>
@@ -73,7 +74,7 @@ const RandomBook = ({setFeaturedBook, featuredBook}) => {
   )
 }
 
-const AddBook = () => {
+const AddBook = ({refresh, setRefresh}) => {
   const [response, setResponse] = useState()
 
   const addBook = () => {  
@@ -91,12 +92,13 @@ const AddBook = () => {
         mode: "cors",
         headers: {'Content-Type': 'application/json' },
         body: query,
-      }).then(function(response) {
+      }).then((response) => {
         return response.json();
       })
-        .then(function(data) {
+        .then((data) => {
         console.log(data);
         document.getElementById("response").innerHTML = data.message;
+        setRefresh(!refresh);
       }))
     })();
   }
@@ -115,7 +117,7 @@ const AddBook = () => {
   )
 }
 
-const FindBooks = ({setSearchResults, searchResults}) => {
+const FindBooks = ({setSearchResults, searchResults, refresh, setRefresh}) => {
 
   const searchFunc = (e) => {
     let mode = document.getElementById("searchMode");
@@ -152,7 +154,7 @@ const FindBooks = ({setSearchResults, searchResults}) => {
       <div className="bookList">
       {searchResults.map((item, index) => {
         return (
-          <Book key={index} book={item} />
+          <Book key={index} book={item} refresh={refresh} setRefresh={setRefresh} />
         )
       })}
       </div>
@@ -160,13 +162,36 @@ const FindBooks = ({setSearchResults, searchResults}) => {
   )
 }
 
-const Book = ({book}) => {
+const Book = ({book, refresh, setRefresh}) => {
+
   
+
+  const removeBook = () => {
+    const query = JSON.stringify({_id: book._id})
+    console.log(query);
+
+    (async () => {
+      await fetch("http://localhost:5001/books", {
+        method: "DELETE",
+        mode: "cors",
+        headers: {'Content-Type': 'application/json' },
+        body: query,
+      }).then((response) => {
+        console.log(response);
+        return response.json();
+      }).then(() => {
+        setRefresh(!refresh);
+      });
+    })();
+  }
+
   return (
     <div className="bookCard">
       <p>{book.title}</p>
       <p>{book.author}</p>
       <p>{book.genre}</p>
+
+      {refresh && <button onClick={removeBook}>Remove from<br />database</button> }
     </div>
   )
 }
