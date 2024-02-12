@@ -31,6 +31,7 @@ function App() {
         <button onClick={()=>setState("all")}>See all books</button>
         <button onClick={()=>setState("random")}>Randomiser</button>
         <button onClick={()=>setState("search")}>Find Books</button>
+        <button onClick={()=>setState("add")}>Add Book</button>
         {/* <button onClick={()=>setState("addBook")}>Add book</button> */}
       </div>
       {page}
@@ -72,10 +73,44 @@ const RandomBook = ({setFeaturedBook, featuredBook}) => {
   )
 }
 
-const AddBook = ({setSearchResults, searchResults}) => { 
+const AddBook = () => {
+  const [response, setResponse] = useState()
+
+  const addBook = () => {  
+    const query = JSON.stringify([{
+      title: document.getElementById("inputTitle").value,
+      author: document.getElementById("inputAuthor").value,
+      genre: document.getElementById("inputGenre").value,
+    }]);
+    
+    console.log(query);
+
+    (async () => {
+      setResponse(await fetch("http://localhost:5001/books", {
+        method: "POST",
+        mode: "cors",
+        headers: {'Content-Type': 'application/json' },
+        body: query,
+      }).then(function(response) {
+        return response.json();
+      })
+        .then(function(data) {
+        console.log(data);
+        document.getElementById("response").innerHTML = data.message;
+      }))
+    })();
+  }
 
   return (
     <>
+      <div className="inputHolder">
+        <input id="inputTitle" placeholder="Title"></input>
+        <input id="inputAuthor" placeholder="Author"></input>
+        <input id="inputGenre" placeholder="Genre"></input>
+      </div>
+      <button onClick={addBook}>Add book</button>
+
+      <p id="response">{response}</p>
     </>
   )
 }
