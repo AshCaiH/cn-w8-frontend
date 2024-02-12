@@ -5,6 +5,7 @@ function App() {
   const [state, setState] = useState("all");
   const [books, setBooks] = useState([]);
   const [featuredBook, setFeaturedBook] = useState({});
+  const [searchResults, setSearchResults] = useState({});
 
   useEffect(() => {
     (async () => {
@@ -21,7 +22,8 @@ function App() {
 
   if (state == "all") page = <AllBooks books={books} />
   else if (state == "random") page = <RandomBook setFeaturedBook={setFeaturedBook} featuredBook={featuredBook} />
-  else if (state == "add") page = <RandomBook books={books} />
+  else if (state == "add") page = <AddBook />
+  else if (state == "search") page = <FindBooks books={books} />
 
   return (
     <>
@@ -71,6 +73,26 @@ const RandomBook = ({setFeaturedBook, featuredBook}) => {
       <p>{featuredBook.genre}</p>
     </>
   )
+}
+
+const AddBook = ({setSearchResults, searchResults}) => { 
+
+  return (
+    <>
+    </>
+  )
+}
+
+const FindBooks = ({setSearchResults, searchResults}) => {
+
+  return (
+    <>
+    </>
+  )
+}
+
+const Book = ({index, book}) => {
+  
 }
 
 export default App
